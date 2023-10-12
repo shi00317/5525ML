@@ -42,27 +42,43 @@ y_test = y[NUM_TRAIN:]
 #####################
 # ADD YOUR CODE BELOW
 #####################
-
 # Import your CV package here (either your my_cross_val or sci-kit learn )
-
+from my_cross_val import my_cross_val
+from sklearn.metrics import mean_squared_error, accuracy_score
+import matplotlib.pyplot as plt
 eta_vals = [0.001, 0.01, 0.1]
 
 # Logistic Regression
 for eta_val in eta_vals:
 
     # instantiate logistic regression object
+    cur_regression = MyLogisticRegression(3,1000,eta_val)
 
     # call to your CV function to compute error rates for each fold
-
+    res =my_cross_val(cur_regression, 'mse', X_train,y_train , k=10)
     # print error rates from CV
+    print(f"========================={eta_val}=============================")
+    print("Logistic regression")
+    print(f"the 10-fold with learning rate {eta_val} loss value: {res}")
+    print(f"the mean loss value is: {np.mean(res)}")
+    print(f"the std for loss value is: {np.std(res)}")
+    print("")
+    
 
 # instantiate logistic regression object for best value of eta
-
+best_regression = MyLogisticRegression(3,100000,0.001)
 # fit model using all training data
-
+best_regression.fit(X_train,y_train)
 # predict on test data
-
+y_hat = best_regression.predict(X_test)
 # compute error rate on test data
-
+mse = mean_squared_error(y_hat, y_test)
+zero_one = 1-accuracy_score(y_hat, y_test)
 # print error rate on test data
+print("Using the best learning rate 0.01")
+print(f"Mean Squared Error: {mse}")
+print(f"Accuracy Score: {zero_one}")
+plt.plot(best_regression._getLoss_())
+plt.ylabel('Loss')
+plt.show()
 
